@@ -1,5 +1,8 @@
 .vscode
 
+# generate txt result
+simK*.txt
+
 /build
 
 # Compiled Object files

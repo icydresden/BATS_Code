@@ -135,7 +135,7 @@ private:
 public:
     BATSimulator(int M, int m, int K, int T) : batchSize(M), gf_order(m), packetNum(K), packetSize(T) {
 
-        nEncLimit = packetNum / batchSize * 30;
+        nEncLimit = packetNum / batchSize * 30; //nEnc < nEncLimit && !encEnd
         packetSizeWithHeader = packetSize + batchSize * gf_order / 8;
         packetSizeWithHeaderAndId = packetSizeWithHeader + sizeof(KeyType);
 
@@ -397,7 +397,7 @@ int main(int argc, char* argv[]) {
         case 1:
             batchSize = 32; // 16, 32, 64
             packetNum = 1600;
-            iterationNum = 10;
+            iterationNum = 40;
             break;
         case 4:
             batchSize = atoi(argv[1]);
