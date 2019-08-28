@@ -1,6 +1,7 @@
 /*
  Copyright (C) 2014 Shenghao Yang
- 
+ Copyright (C) 2019 Yicong Su
+
  This file is part of SimBATS.
  
  SimBATS is free software: you can redistribute it and/or modify
@@ -73,7 +74,7 @@ class TimeUsed{
     private:
         struct Interval{
             private:
-                struct tms start_t, end_t;
+                struct tms start_t, end_t;  // tms: long int (at least 32 bits)
                 long s, e;
                 long t;
             public:
@@ -94,6 +95,7 @@ class TimeUsed{
                     return (double) t/60; //sysconf(_SC_CLK_TCK);
                 }
         };
+        double en_de_time;
 
     public:
         Interval encoding;
@@ -104,6 +106,9 @@ class TimeUsed{
             encoding.clear();
             decoding.clear();
             nccoding.clear();
+        }
+        double get_en_de_time(){
+            return encoding.time()+decoding.time();
         }
 };
 
@@ -305,6 +310,7 @@ public:
         SymbolType** recBatch = mallocMat<SymbolType>(batchSize, packetSizeWithHeaderAndId);
         SymbolType** recBatchWithoutId = (SymbolType**) malloc(batchSize * sizeof (SymbolType*));
 
+        // move to the addresss of batch data
         for (int i = 0; i < batchSize; i++) {
             batchWithoutId[i] = batch[i] + sizeof(KeyType);
 			recBatchWithoutId[i] = recBatch[i] + sizeof(KeyType);
@@ -386,7 +392,7 @@ int main(int argc, char* argv[]) {
     int batchSize;
     int gf_order = 8; // 1, 2, 4, 8
     int packetNum;
-    int packetSize = 1; //In Bytes
+    int packetSize = 1600; //In Bytes
     //int packetSizeInSymbol = packetSize * SymbolSize / gf_order;
 
     int iterationNum;
@@ -395,10 +401,17 @@ int main(int argc, char* argv[]) {
 
     switch(argc) {
         case 1:
-            batchSize = 32; // 16, 32, 64
-            packetNum = 1600;
-            iterationNum = 40;
+            batchSize = 32; // default 32.  16, 32, 64
+            packetNum = 1600; // default 1600
+            iterationNum = 20; // default 40
             break;
+
+        case 2:
+            batchSize = 32; // default 32.  16, 32, 64
+            packetNum = 1600; // default 1600
+            iterationNum = atoi(argv[1]); // default 40
+            break;
+            
         case 4:
             batchSize = atoi(argv[1]);
             packetNum = atoi(argv[2]);
@@ -452,7 +465,7 @@ int main(int argc, char* argv[]) {
         output << rate << " ";
 
         cout << "Decoding time = " << timeUsed.decoding.time() << " Encoding time = " << timeUsed.encoding.time()  << endl;
-
+        cout << "Total time: get_en_de_time() =" << timeUsed.get_en_de_time()<< endl;
         cout << "Rank Distribution: ";
 
         double Erk = 0.0;

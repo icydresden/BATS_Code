@@ -61,6 +61,7 @@ inline KeyType getIDFromPacket(SymbolType* packet){
     return id;
 }
 
+//Distubution
 class DistSampler {
     double accu[MAX_DEGREE+1];
     int n;

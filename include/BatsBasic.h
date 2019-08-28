@@ -61,6 +61,7 @@ protected:
 //    int maxInact; // the maximum allowed number of inactivation 
 //    int maxRedun; // the maximum redundancy used to decode inactive packets
     int piDegree; // PI degree in a batch
+
     // degree distribution
     //int D;
     DistSampler *dist;
@@ -148,6 +149,7 @@ public:
             delete dist;
     }
 
+    // get degree distubution function
     void setDegreeDist(double* degreeDist, int maxDeg) {
         if (dist != NULL)
             delete dist;
@@ -274,7 +276,7 @@ public:
         }
         
         // encoding: PI parts
-        //degree = piDegree;
+        // degree = piDegree;
         
         if (piNum > 0) {
             
